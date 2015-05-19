@@ -35,7 +35,7 @@ namespace FileHeaderChecker.Forms {
 				listFiles.Items.Clear();
 				IterateDirs(new DirectoryInfo(txtPath.Text), options, ref files);
 				listFiles.Items.AddRange(files.ToArray());
-				lblDeviants.Text = string.Format("Deviant Files ({0} found):", files.Count);
+				lblDeviants.Text = $"Deviant Files ({files.Count} found):";
 				if (files.Count == 0) {
 					MessageBox.Show("No deviants found");
 				}
@@ -44,7 +44,7 @@ namespace FileHeaderChecker.Forms {
 
 		private void IterateDirs(DirectoryInfo pDir, CheckerOptions pOptions, ref List<string> pFiles) {
 			foreach (DirectoryInfo i in pDir.GetDirectories()) {
-				// Common SVN/git directories
+				// Common SVN/git/conf directories
 				if (i.Name.StartsWith(".") || i.Name.StartsWith("_")) continue;
 				IterateDirs(i, pOptions, ref pFiles);
 			}
