@@ -42,34 +42,34 @@ namespace FileHeaderChecker.Forms {
 			}
 		}
 
-		private void IterateDirs(DirectoryInfo pDir, CheckerOptions pOptions, ref List<string> pFiles) {
-			foreach (DirectoryInfo i in pDir.GetDirectories()) {
+		private void IterateDirs(DirectoryInfo dir, CheckerOptions options, ref List<string> files) {
+			foreach (DirectoryInfo i in dir.GetDirectories()) {
 				// Common SVN/git/conf directories
 				if (i.Name.StartsWith(".") || i.Name.StartsWith("_")) continue;
-				IterateDirs(i, pOptions, ref pFiles);
+				IterateDirs(i, options, ref files);
 			}
-			foreach (FileInfo i in pDir.GetFiles()) {
-				TestFile(i, pOptions, ref pFiles);
+			foreach (FileInfo i in dir.GetFiles()) {
+				TestFile(i, options, ref files);
 			}
 		}
 
-		private void TestFile(FileInfo pFile, CheckerOptions pOptions, ref List<string> pFiles) {
-			bool valid = pOptions.AllExtensions;
-			foreach (string ext in pOptions.Extensions) {
-				if (pFile.Extension == ext) {
+		private void TestFile(FileInfo file, CheckerOptions options, ref List<string> files) {
+			bool valid = options.AllExtensions;
+			foreach (string ext in options.Extensions) {
+				if (file.Extension == ext) {
 					valid = true;
 					break;
 				}
 			}
 			if (!valid) return;
-			using (FileStream fs = new FileStream(pFile.FullName, FileMode.Open)) {
+			using (FileStream fs = new FileStream(file.FullName, FileMode.Open)) {
 				using (StreamReader sr = new StreamReader(fs)) {
 					int textBytes = txtPreamble.TextLength;
 					char[] bytes = new char[textBytes];
 					sr.ReadBlock(bytes, 0, textBytes);
 					string content = new string(bytes);
 					if (string.Compare(content, txtPreamble.Text) != 0) {
-						pFiles.Add(pFile.FullName.Replace(pOptions.Root, string.Empty));
+						files.Add(file.FullName.Replace(options.Root, string.Empty));
 					}
 				}
 			}
